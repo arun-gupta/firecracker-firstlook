@@ -1,14 +1,26 @@
 = First look at Firecracker
+:toc:
 
 = Chapter 1: What is Firecracker
 
+**Slides**
+
 = Chapter 2: Building Blocks of Firecracker
+
+**Slides**
 
 = Chapter 3: Benefits of Firecracker
 
-= Chpater 4: Getting started with Firecracker 
+**Slides**
+
+= Chapter 4: Getting started with Firecracker 
+
+**Prep Work**
 
 . Create an `i3.metal` instance using Ubuntu 18.04 on EC2. 
+
+**Code**
+
 . Firecracker uses KVM and needs read/write access that can be granted as shown below:
 
     sudo setfacl -m u:${USER}:rw /dev/kvm
@@ -68,40 +80,39 @@
 
 = Chapter 6: Starting 4000 microVMs using Firecracker
 
-- Create an `i3.metal` instance using AL2
-- Install:
+**Prep Work*
 
-```
-sudo yum update -y
-sudo yum install -y git python3
-git clone https://github.com/firecracker-microvm/firecracker-demo
-```
+. Create an `i3.metal` instance using AL2
+. Update the machine:
 
-- Setup:
+    sudo yum update -y
+    sudo yum install -y git python3
 
-```
-sudo tee -a /etc/security/limits.conf <<EOL
-ec2-user soft nproc 16384
-ec2-user hard nproc 16384
-EOL
-sudo setfacl -m u:${USER}:rw /dev/kvm
-```
+**Code**
 
-- In terminal 1:
+. Install:
 
-```
-cd firecracker-demo
-TERM='xterm-256color'
-python3 microvm-tiles.py
-```
+    git clone https://github.com/firecracker-microvm/firecracker-demo
 
-- In terminal 2:
+. Setup:
 
-```
-cd firecracker-demo
-sudo ./0.initial-setup.sh 4000
-./parallel-start-many.sh 0 4000 6
-```
+    sudo tee -a /etc/security/limits.conf <<EOL
+    ec2-user soft nproc 16384
+    ec2-user hard nproc 16384
+    EOL
+    sudo setfacl -m u:${USER}:rw /dev/kvm
+
+. In terminal 1:
+
+    cd firecracker-demo
+    TERM='xterm-256color'
+    python3 microvm-tiles.py
+
+. In terminal 2:
+
+    cd firecracker-demo
+    sudo ./0.initial-setup.sh 4000
+    ./parallel-start-many.sh 0 4000 6
 
 = Chapter 7: Integration with container runtimes
 
