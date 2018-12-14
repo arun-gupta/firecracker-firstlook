@@ -1,0 +1,73 @@
+= First look at Firecracker
+
+= Chapter 1: What is Firecracker
+
+= Chapter 2: Building Blocks of Firecracker
+
+= Chapter 3: Benefits of Firecracker
+
+= Chpater 4: Getting started with Firecracker 
+
+. Create an `i3.metal` instance using Ubuntu 18.04 on EC2. 
+. Firecracker uses KVM and needs read/write access that can be granted as shown below:
+
+    sudo setfacl -m u:${USER}:rw /dev/kvm
+
+. Download the Firecracker binary on EC2 as:
+
+    curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.11.0/firecracker-v0.11.0
+
+. Start Firecracker:
+
+    ./firecracker --api-sock /tmp/firecracker.socket
+
+. In a new terminal, query the microVM:
+
+    curl --unix-socket /tmp/firecracker.sock "http://localhost/machine-config"
+
+= Chapter 5: Configure Kernel and filesystem for Firecracker
+
+. Download a sample kernel and rootfs:
+
+    curl -fsSL -o hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
+    curl -fsSL -o hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
+
+. Setup the guest kernel:
+
+    curl --unix-socket /tmp/firecracker.sock -i \
+        -X PUT 'http://localhost/boot-source'   \
+        -H 'Accept: application/json'           \
+        -H 'Content-Type: application/json'     \
+        -d '{        "kernel_image_path": "./hello-vmlinux.bin", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"    }'
+
+. Setup rootfs:
+
+    curl --unix-socket /tmp/firecracker.sock -i \
+        -X PUT 'http://localhost/drives/rootfs' \
+        -H 'Accept: application/json'           \
+        -H 'Content-Type: application/json'     \
+        -d '{        "drive_id": "rootfs",        "path_on_host": "./hello-rootfs.ext4",        "is_root_device": true,        "is_read_only": false    }'
+
+. Start the guest machine:
+
+    curl --unix-socket /tmp/firecracker.sock -i \
+        -X PUT 'http://localhost/actions'       \
+        -H  'Accept: application/json'          \
+        -H  'Content-Type: application/json'    \
+        -d '{        "action_type": "InstanceStart"     }'
+
+. Terminal 1 shows a login prompt:
+
+    Welcome to Alpine Linux 3.8
+    Kernel 4.14.55-84.37.amzn2.x86_64 on an x86_64 (ttyS0)
+    localhost login:
+
+. Log in as `root` with password `root`
+. Show the filesystem using `ls /`
+. Terminate the microVM using `reboot`
+
+= Chapter 6: Integration with container runtimes
+
+= Chapter 7: Next Steps with Firecracker
+
+
