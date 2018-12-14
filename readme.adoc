@@ -66,8 +66,45 @@
 . Show the filesystem using `ls /`
 . Terminate the microVM using `reboot`
 
-= Chapter 6: Integration with container runtimes
+= Chapter 6: Starting 4000 microVMs using Firecracker
 
-= Chapter 7: Next Steps with Firecracker
+- Create an `i3.metal` instance using AL2
+- Install:
+
+```
+sudo yum update -y
+sudo yum install -y git python3
+git clone https://github.com/firecracker-microvm/firecracker-demo
+```
+
+- Setup:
+
+```
+sudo tee -a /etc/security/limits.conf <<EOL
+ec2-user soft nproc 16384
+ec2-user hard nproc 16384
+EOL
+sudo setfacl -m u:${USER}:rw /dev/kvm
+```
+
+- In terminal 1:
+
+```
+cd firecracker-demo
+TERM='xterm-256color'
+python3 microvm-tiles.py
+```
+
+- In terminal 2:
+
+```
+cd firecracker-demo
+sudo ./0.initial-setup.sh 4000
+./parallel-start-many.sh 0 4000 6
+```
+
+= Chapter 7: Integration with container runtimes
+
+= Chapter 8: Next Steps with Firecracker
 
 
