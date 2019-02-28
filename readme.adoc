@@ -68,7 +68,7 @@
 . Log in as `root` with password `root`
 . Show the filesystem using `ls /`
 
-= Chapter 6: Access the microVM using REST API:
+= Chapter 6: Access the microVM using REST API
 
 . In a new terminal, query the microVM:
 
@@ -90,7 +90,7 @@ Show the vCPU and memory size.
     }
 
 . In terminal 1, shutdown the VM using the command `reboot`
-. Download a Ubuntu-based test kernel and Xenial root filesyste:
+. Download a Ubuntu-based test kernel and Xenial root filesystem:
 +
     curl -fsSL -o vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/kernel/vmlinux.bin
     curl -fsSL -o xenial.rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/fsfiles/xenial.rootfs.ext4
