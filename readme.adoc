@@ -122,6 +122,28 @@ Firecracker emulates a standard AT keyboard, connected via an i8042 controller. 
 
 https://github.com/kata-containers/packaging/tree/master/kata-deploy#kubernetes-quick-start
 
+. Install eksctl CLI:
+
+    brew tap weaveworks/tap
+    brew install weaveworks/tap/eksctl
+
+. Create EKS cluster:
+
+    eksctl create cluster --name kata --nodes 4
+
+. Install Kata:
+
+    kubectl apply -f https://raw.githubusercontent.com/kata-containers/packaging/master/kata-deploy/kata-rbac.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kata-containers/packaging/master/kata-deploy/kata-deploy.yaml
+
+. Deploy a pod using `kata-fc` runtime:
+
+    kubectl apply -f https://raw.githubusercontent.com/kata-containers/packaging/master/kata-deploy/examples/test-deploy-kata-fc.yaml
+
+. Get pod details:
+
+    kubectl describe pod <>
+
 
 = Chapter 8: Next Steps with Firecracker
 
