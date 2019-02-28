@@ -115,8 +115,13 @@ Firecracker emulates a standard AT keyboard, connected via an i8042 controller. 
 
 **Slides**
 
-. Firecracker and Kata Containers
 . Firecracker and Containerd
+. Firecracker and Kata Containers
+
+**Code**
+
+https://github.com/kata-containers/packaging/tree/master/kata-deploy#kubernetes-quick-start
+
 
 = Chapter 8: Next Steps with Firecracker
 
