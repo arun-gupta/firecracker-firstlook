@@ -27,7 +27,7 @@
 
 **Prep Work**
 
-. Create an `m3.metal` instance using Amazon Linux 2 on EC2. 
+. Create an `m5.metal` instance using Amazon Linux 2 on EC2. 
 . Clone and build `firectl`:
 
     sudo yum install -y git
@@ -48,7 +48,7 @@
     chmod +x firecracker-v0.15.0
     sudo mv firecracker-v0.15.0 /usr/local/bin/firecracker
 
-. Download kernel and root filesystem:
+. Download an Alpine Linux-based test kernel and a root filesystem:
 
     curl -fsSL -o hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
     curl -fsSL -o hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
@@ -75,7 +75,7 @@
     $ curl --unix-socket ~/.firecracker.sock-* http://localhost/
     {"id":"anonymous-instance","state":"Running","vmm_version":"0.15.0"}
 
-. Get more details about the VM:
+. Get more details about the microVM:
 +
     $ curl --unix-socket ~/.firecracker.sock-* http://localhost/machine-config
     { "vcpu_count": 1, "mem_size_mib": 512,  "ht_enabled": true,  "cpu_template": "Uninitialized" }
@@ -89,62 +89,41 @@ Show the vCPU and memory size.
     "fault_message": "The update operation is not allowed after boot."
     }
 
-. Shutdown the microVM:
+. In terminal 1, shutdown the VM using the command `reboot`
+. Download a Ubuntu-based test kernel and Xenial root filesyste:
++
+    curl -fsSL -o vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/kernel/vmlinux.bin
+    curl -fsSL -o xenial.rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/fsfiles/xenial.rootfs.ext4
++
+Firecracker emulates a standard AT keyboard, connected via an i8042 controller. This kernel has driver support for both these devices.
++
+. Start a new microVM using new kernel and filesystem:
+
+    ./firectl \
+      --kernel=vmlinux.bin \
+      --root-drive=xenial.rootfs.ext4
+
+. Query the microVM again:
+
+    curl --unix-socket ~/.firecracker.sock-* http://localhost/machine-config
+
+. Shutdown the microVM using an action:
 
     curl --unix-socket ~/.firecracker.sock-* -X PUT http://localhost/actions -d '{ "action_type": "SendCtrlAltDel" }'
 
-. Start again:
-
-    ./firectl \
-      --kernel=hello-vmlinux.bin \
-      --root-drive=hello-rootfs.ext4
-
-. Terminate the microVM using `reboot`
-
-= Chapter 7: Starting 1000 microVMs using Firecracker
-
-**Prep Work*
-
-. Create an `i3.metal` instance using AL2
-. Update the machine:
-
-    sudo yum update -y
-    sudo yum install -y git python3
-
-**Code**
-
-. Install:
-
-    git clone https://github.com/firecracker-microvm/firecracker-demo
-
-. Setup:
-
-    sudo tee -a /etc/security/limits.conf <<EOL
-    ec2-user soft nproc 16384
-    ec2-user hard nproc 16384
-    EOL
-    sudo setfacl -m u:${USER}:rw /dev/kvm
-
-. In terminal 1:
-
-    cd firecracker-demo
-    TERM='xterm-256color'
-    python3 microvm-tiles.py
-
-. In terminal 2:
-
-    cd firecracker-demo
-    sudo ./0.initial-setup.sh 4000
-    ./parallel-start-many.sh 0 4000 6
-
-= Chapter 8: Firecracker and Container Integration
+= Chapter 7: Firecracker and Container Integration
 
 **Slides**
 
 . Firecracker and Kata Containers
 . Firecracker and Containerd
 
-= Chapter 9: Next Steps with Firecracker
+= Chapter 8: Next Steps with Firecracker
+
+. https://firecracker-microvm.github.io/
+. https://github.com/rust-vmm
+. Slack channel: https://tinyurl.com/firecracker-microvm
+. Good First Issue: https://github.com/firecracker-microvm/firecracker/issues?q=is%3Aopen+is%3Aissue+label%3A%22Contribute%3A+Good+First+Issue%22
 
 
 
