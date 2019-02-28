@@ -5,19 +5,36 @@
 
 **Slides**
 
-= Chapter 2: Building Blocks of Firecracker
+. What is Firecracker?
+. Benefits of Firecracker
+
+= Chapter 2: Firecracker Design
 
 **Slides**
 
-= Chapter 3: Benefits of Firecracker
+. Firecracker Design Principles
+. Firecracker Design
+
+= Chapter 3: Firecracker and Lambda
 
 **Slides**
 
-= Chapter 4: Getting started with Firecracker 
+= Chapter 4: Firecracker and Fargate (TBD)
+
+**Slides**
+
+= Chapter 5: Getting Started with Firecracker
 
 **Prep Work**
 
-. Create an `i3.metal` instance using Ubuntu 18.04 on EC2. 
+. Create an `m3.metal` instance using Amazon Linux 2 on EC2. 
+. Clone and build `firectl`:
+
+    sudo yum install -y git
+    git clone https://github.com/firecracker-microvm/firectl
+    sudo amazon-linux-extras install -y golang1.11
+    cd firectl
+    make
 
 **Code**
 
@@ -25,48 +42,22 @@
 
     sudo setfacl -m u:${USER}:rw /dev/kvm
 
-. Download the Firecracker binary on EC2 as:
+. Download the Firecracker binary:
 
-    curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.11.0/firecracker-v0.11.0
+    curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.15.0/firecracker-v0.15.0
+    chmod +x firecracker-v0.15.0
+    sudo mv firecracker-v0.15.0 /usr/local/bin/firecracker
 
-. Start Firecracker:
-
-    ./firecracker --api-sock /tmp/firecracker.socket
-
-. In a new terminal, query the microVM:
-
-    curl --unix-socket /tmp/firecracker.sock "http://localhost/machine-config"
-
-= Chapter 5: Configure Kernel and filesystem for Firecracker
-
-. Download a sample kernel and rootfs:
+. Download kernel and root filesystem:
 
     curl -fsSL -o hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
     curl -fsSL -o hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
 
-. Setup the guest kernel:
+. Create microVM:
 
-    curl --unix-socket /tmp/firecracker.sock -i \
-        -X PUT 'http://localhost/boot-source'   \
-        -H 'Accept: application/json'           \
-        -H 'Content-Type: application/json'     \
-        -d '{        "kernel_image_path": "./hello-vmlinux.bin", "boot_args": "console=ttyS0 reboot=k panic=1 pci=off"    }'
-
-. Setup rootfs:
-
-    curl --unix-socket /tmp/firecracker.sock -i \
-        -X PUT 'http://localhost/drives/rootfs' \
-        -H 'Accept: application/json'           \
-        -H 'Content-Type: application/json'     \
-        -d '{        "drive_id": "rootfs",        "path_on_host": "./hello-rootfs.ext4",        "is_root_device": true,        "is_read_only": false    }'
-
-. Start the guest machine:
-
-    curl --unix-socket /tmp/firecracker.sock -i \
-        -X PUT 'http://localhost/actions'       \
-        -H  'Accept: application/json'          \
-        -H  'Content-Type: application/json'    \
-        -d '{        "action_type": "InstanceStart"     }'
+    ./firectl \
+      --kernel=hello-vmlinux.bin \
+      --root-drive=hello-rootfs.ext4
 
 . Terminal 1 shows a login prompt:
 
@@ -76,9 +67,41 @@
 
 . Log in as `root` with password `root`
 . Show the filesystem using `ls /`
+
+= Chapter 6: Access the microVM using REST API:
+
+. In a new terminal, query the microVM:
+
+    $ curl --unix-socket ~/.firecracker.sock-* http://localhost/
+    {"id":"anonymous-instance","state":"Running","vmm_version":"0.15.0"}
+
+. Get more details about the VM:
++
+    $ curl --unix-socket ~/.firecracker.sock-* http://localhost/machine-config
+    { "vcpu_count": 1, "mem_size_mib": 512,  "ht_enabled": true,  "cpu_template": "Uninitialized" }
++
+Show the vCPU and memory size.
++
+. Try to update the vCPU:
+
+    $ curl --unix-socket ~/.firecracker.sock-* -X PUT http://localhost/machine-config -d '{ "vcpu_count": 2}'
+    {
+    "fault_message": "The update operation is not allowed after boot."
+    }
+
+. Shutdown the microVM:
+
+    curl --unix-socket ~/.firecracker.sock-* -X PUT http://localhost/actions -d '{ "action_type": "SendCtrlAltDel" }'
+
+. Start again:
+
+    ./firectl \
+      --kernel=hello-vmlinux.bin \
+      --root-drive=hello-rootfs.ext4
+
 . Terminate the microVM using `reboot`
 
-= Chapter 6: Starting 4000 microVMs using Firecracker
+= Chapter 7: Starting 1000 microVMs using Firecracker
 
 **Prep Work*
 
@@ -114,8 +137,14 @@
     sudo ./0.initial-setup.sh 4000
     ./parallel-start-many.sh 0 4000 6
 
-= Chapter 7: Integration with container runtimes
+= Chapter 8: Firecracker and Container Integration
 
-= Chapter 8: Next Steps with Firecracker
+**Slides**
+
+. Firecracker and Kata Containers
+. Firecracker and Containerd
+
+= Chapter 9: Next Steps with Firecracker
+
 
 
