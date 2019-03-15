@@ -27,7 +27,10 @@
 
 **Prep Work**
 
-. Create an `m5.metal` instance using Amazon Linux 2 on EC2. 
+. Create an `m5.metal` instance using Amazon Linux 2 on EC2 and login:
+
+    ssh -i ~/.ssh/arun-us-east1.pem ec2-user@<ip-address>
+
 . Clone and build `firectl`:
 
     sudo yum install -y git
@@ -70,10 +73,14 @@
 
 = Chapter 6: Access the microVM using REST API
 
-. In a new terminal, query the microVM:
+. Login to the same EC2 instance:
+
+   ssh -i ~/.ssh/arun-us-east1.pem ec2-user@<ip-address>
+ 
+. Query the microVM:
 
     $ curl --unix-socket ~/.firecracker.sock-* http://localhost/
-    {"id":"anonymous-instance","state":"Running","vmm_version":"0.15.0"}
+    {"id":"anonymous-instance","state":"Running","vmm_version":"0.15.2"}
 
 . Get more details about the microVM:
 +
@@ -119,6 +126,8 @@ Firecracker emulates a standard AT keyboard, connected via an i8042 controller. 
 . Firecracker and Kata Containers
 
 **Code**
+
+Waiting for https://github.com/aws/containers-roadmap/issues/24.
 
 https://github.com/kata-containers/packaging/tree/master/kata-deploy#kubernetes-quick-start
 
