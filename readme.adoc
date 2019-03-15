@@ -1,7 +1,7 @@
 = First Look at Firecracker
 :toc:
 
-= Chapter 1: What is Firecracker
+= Video 1: What is Firecracker
 
 **Slides**
 
@@ -9,22 +9,22 @@
 . Benefits of Firecracker
 . Firecracker Design Principles
 
-= Chapter 2: Firecracker Design
+= Video 2: Firecracker Design
 
 **Slides**
 
 . Firecracker Design
 . REST API
 
-= Chapter 3: Firecracker and Lambda
+= Video 3: Firecracker and Lambda
 
 **Slides**
 
-= Chapter 4: Firecracker and Fargate
+= Video 4: Firecracker and Fargate
 
 **Slides**
 
-= Chapter 5: Getting Started with Firecracker
+= Video 5: Getting Started with Firecracker
 
 **Prep Work**
 
@@ -70,11 +70,23 @@
     localhost login:
 
 . Log in as `root` with password `root`
-. Show the filesystem using `ls /`
+. Show the filesystem:
 
-= Chapter 6: Access the microVM using REST API
+    ls /
+. Shutdown the machine:
 
-. Login to the same EC2 instance:
+    reboot
+
+= Video 6: Access the microVM using REST API
+
+. Start the machine again:
+
+    sudo setfacl -m u:${USER}:rw /dev/kvm
+    ./firectl \
+      --kernel=hello-vmlinux.bin \
+      --root-drive=hello-rootfs.ext4
+
+. In another terminal, login to the same EC2 instance:
 
    ssh -i ~/.ssh/arun-us-east1.pem ec2-user@<ip-address>
  
@@ -97,14 +109,17 @@ Show the vCPU and memory size.
     "fault_message": "The update operation is not allowed after boot."
     }
 
-. In terminal 1, shutdown the VM using the command `reboot`
-. Download a Ubuntu-based test kernel and Xenial root filesystem:
+. Try to shutdown the VM using by sending `SendCtrlAltDel` action:
 +
+    curl --unix-socket ~/.firecracker.sock-* -X PUT http://localhost/actions -d '{ "action_type": "SendCtrlAltDel" }'
++
+Explain that this will not work. Firecracker emulates a standard AT keyboard, connected via an i8042 controller. The required device drivers are not enabled in this kernel.
++
+. Download a Ubuntu-based test kernel and Xenial root filesystem, that has the device drivers enabled:
+
     curl -fsSL -o vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/kernel/vmlinux.bin
     curl -fsSL -o xenial.rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/ubuntu_with_ssh/fsfiles/xenial.rootfs.ext4
-+
-Firecracker emulates a standard AT keyboard, connected via an i8042 controller. This kernel has driver support for both these devices.
-+
+
 . Start a new microVM using new kernel and filesystem:
 
     sudo setfacl -m u:${USER}:rw /dev/kvm
@@ -120,7 +135,7 @@ Firecracker emulates a standard AT keyboard, connected via an i8042 controller. 
 
     curl --unix-socket ~/.firecracker.sock-* -X PUT http://localhost/actions -d '{ "action_type": "SendCtrlAltDel" }'
 
-= Chapter 7: Firecracker and Container Integration
+= Video 7: Firecracker and Container Integration
 
 **Slides**
 
