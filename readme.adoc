@@ -170,8 +170,7 @@ https://github.com/kata-containers/packaging/tree/master/kata-deploy#kubernetes-
 
     kubectl describe pod <>
 
-
-= Chapter 8: Next Steps with Firecracker
+= Video 8: Next Steps with Firecracker
 
 . https://firecracker-microvm.github.io/
 . https://github.com/rust-vmm
