@@ -44,9 +44,9 @@
 
 . Download the Firecracker binary:
 
-    curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.15.0/firecracker-v0.15.0
-    chmod +x firecracker-v0.15.0
-    sudo mv firecracker-v0.15.0 /usr/local/bin/firecracker
+    curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v0.15.2/firecracker-v0.15.2
+    chmod +x firecracker-v0.15.2
+    sudo mv firecracker-v0.15.2 /usr/local/bin/firecracker
 
 . Download an Alpine Linux-based test kernel and a root filesystem:
 
