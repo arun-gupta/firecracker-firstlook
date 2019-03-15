@@ -73,6 +73,7 @@
 . Show the filesystem:
 
     ls /
+
 . Shutdown the machine:
 
     reboot
