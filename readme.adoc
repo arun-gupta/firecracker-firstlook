@@ -7,19 +7,20 @@
 
 . What is Firecracker?
 . Benefits of Firecracker
+. Firecracker Design Principles
 
 = Chapter 2: Firecracker Design
 
 **Slides**
 
-. Firecracker Design Principles
 . Firecracker Design
+. REST API
 
 = Chapter 3: Firecracker and Lambda
 
 **Slides**
 
-= Chapter 4: Firecracker and Fargate (TBD)
+= Chapter 4: Firecracker and Fargate
 
 **Slides**
 
@@ -31,6 +32,8 @@
 
     ssh -i ~/.ssh/arun-us-east1.pem ec2-user@<ip-address>
 
+**Code**
+
 . Clone and build `firectl`:
 
     sudo yum install -y git
@@ -38,8 +41,6 @@
     sudo amazon-linux-extras install -y golang1.11
     cd firectl
     make
-
-**Code**
 
 . Firecracker uses KVM and needs read/write access that can be granted as shown below:
 
