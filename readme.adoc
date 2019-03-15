@@ -106,6 +106,7 @@ Firecracker emulates a standard AT keyboard, connected via an i8042 controller. 
 +
 . Start a new microVM using new kernel and filesystem:
 
+    sudo setfacl -m u:${USER}:rw /dev/kvm
     ./firectl \
       --kernel=vmlinux.bin \
       --root-drive=xenial.rootfs.ext4
